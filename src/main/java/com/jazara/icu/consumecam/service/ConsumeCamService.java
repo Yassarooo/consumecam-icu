@@ -54,7 +54,6 @@ public class ConsumeCamService {
                 this.runCamThread(cam).exceptionally(handleRunThreadFailure);
         } else {
             LOGGER.info("camsList is Empty !! ");
-            this.consumeCam("");
         }
     }
 
