@@ -27,7 +27,7 @@ public class ConsumeCamService {
 
     private Long i = 0L;
 
-    ArrayList camsList = new ArrayList<CamDTO>();
+    ArrayList<CamDTO> camsList = new ArrayList<CamDTO>();
 
     @Autowired
     private AuthServiceClient authServiceClient;
