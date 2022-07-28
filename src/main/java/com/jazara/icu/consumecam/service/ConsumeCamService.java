@@ -27,8 +27,6 @@ public class ConsumeCamService {
 
     private Long i = 0L;
 
-    List<CamDTO> camsList;
-
     @Autowired
     private AuthServiceClient authServiceClient;
 
@@ -41,13 +39,14 @@ public class ConsumeCamService {
             throw new Exception("error sending request to auth-service");
         } else {
             ObjectMapper mapper = new ObjectMapper();
-            this.camsList = mapper.readValue(m.getBody().get("result").toString(), List.class);
-            this.startScheduledTask();
+            List<CamDTO> camsList = mapper.readValue(m.getBody().get("result").toString(), List.class);
+            LOGGER.info("CAMSLIST FIRST item : " + camsList.get(0).toString());
+            //this.startScheduledTask();
         }
     }
 
 
-    @Scheduled(fixedRate = 1000L)
+/*    @Scheduled(fixedRate = 1000L)
     public void startScheduledTask() throws Exception {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
@@ -56,7 +55,7 @@ public class ConsumeCamService {
         } else {
             LOGGER.info("camsList is Empty !! ");
         }
-    }
+    }*/
 
     @Async
     public CompletableFuture<Boolean> runCamThread(CamDTO cam) {
