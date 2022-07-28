@@ -1,5 +1,7 @@
 package com.jazara.icu.consumecam.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
 import com.jazara.icu.consumecam.domain.CamDTO;
@@ -41,8 +43,17 @@ public class ConsumeCamService {
             throw new Exception("error sending request to auth-service");
         } else {
             ObjectMapper mapper = new ObjectMapper();
-            LOGGER.info("MAPPER : "+m.getBody().get("result").toString());
-            this.camsList = mapper.readValue(m.getBody().get("result").toString(), ArrayList.class);
+
+            JsonNode cams = (JsonNode) m.getBody().get("result");
+
+//Jackson's use of generics here are completely unsafe, but that's another issue
+            camsList = mapper.convertValue(
+                    cams,
+                    new TypeReference<List<CamDTO>>() {
+                    }
+            );
+
+            LOGGER.info("MAPPER : " + camsList.size());
             this.startScheduledTask();
         }
     }
