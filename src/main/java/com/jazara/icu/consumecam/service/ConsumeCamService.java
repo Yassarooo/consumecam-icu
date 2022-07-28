@@ -43,12 +43,8 @@ public class ConsumeCamService {
             throw new Exception("error sending request to auth-service");
         } else {
             ObjectMapper mapper = new ObjectMapper();
-
-            JsonNode cams = (JsonNode) m.getBody().get("result");
-
-//Jackson's use of generics here are completely unsafe, but that's another issue
             camsList = mapper.convertValue(
-                    cams,
+                    m.getBody().get("result"),
                     new TypeReference<List<CamDTO>>() {
                     }
             );
