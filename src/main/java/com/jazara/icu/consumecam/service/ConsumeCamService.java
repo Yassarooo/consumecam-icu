@@ -1,5 +1,6 @@
 package com.jazara.icu.consumecam.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
 import com.jazara.icu.consumecam.domain.CamDTO;
 import org.opencv.core.Mat;
@@ -26,7 +27,7 @@ public class ConsumeCamService {
 
     private Long i = 0L;
 
-    List<CamDTO> camsList = new ArrayList<CamDTO>();
+    ArrayList camsList = new ArrayList<CamDTO>();
 
     @Autowired
     private AuthServiceClient authServiceClient;
@@ -39,7 +40,8 @@ public class ConsumeCamService {
         if (m.getBody().get("success").equals(false)) {
             throw new Exception("error sending request to auth-service");
         } else {
-            this.camsList = (ArrayList<CamDTO>) m.getBody().get("result");
+            ObjectMapper mapper = new ObjectMapper();
+            this.camsList = mapper.readValue(m.getBody().get("result").toString(), ArrayList.class);
             this.startScheduledTask();
         }
     }
@@ -50,7 +52,6 @@ public class ConsumeCamService {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
             for (final CamDTO cam : camsList)
-
                 this.runCamThread(cam).exceptionally(handleRunThreadFailure);
         } else {
             LOGGER.info("camsList is Empty !! ");
