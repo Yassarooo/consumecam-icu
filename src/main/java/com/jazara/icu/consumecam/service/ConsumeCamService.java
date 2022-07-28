@@ -27,7 +27,7 @@ public class ConsumeCamService {
 
     private Long i = 0L;
 
-    ArrayList<CamDTO> camsList = new ArrayList<CamDTO>();
+    List<CamDTO> camsList;
 
     @Autowired
     private AuthServiceClient authServiceClient;
@@ -41,7 +41,7 @@ public class ConsumeCamService {
             throw new Exception("error sending request to auth-service");
         } else {
             ObjectMapper mapper = new ObjectMapper();
-            this.camsList = mapper.readValue(m.getBody().get("result").toString(), ArrayList.class);
+            this.camsList = mapper.readValue(m.getBody().get("result").toString(), List.class);
             this.startScheduledTask();
         }
     }
