@@ -75,10 +75,9 @@ public class ConsumeCamService {
             //send mat to ai backend and handle response
             LOGGER.info("Done " + this.i++ + " frame for : " + cam.getUrl());
             Thread.sleep(1000);
-            LOGGER.info("Completing "+ " execution for : " + cam.getUrl());
-            return CompletableFuture.completedFuture(true);
-        } else
-            return CompletableFuture.completedFuture(false);
+            LOGGER.info("Completing " + " execution for : " + cam.getUrl());
+        }
+        return runCamThread(cam);
     }
 
     private Function<Throwable, Boolean> handleRunThreadFailure = throwable -> {
