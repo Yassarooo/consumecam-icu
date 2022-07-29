@@ -54,8 +54,6 @@ public class ConsumeCamService {
         }
     }
 
-
-    @Scheduled(fixedRate = 1000L)
     public void startScheduledTask() throws Exception {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
@@ -67,7 +65,8 @@ public class ConsumeCamService {
     }
 
     @Async
-    public CompletableFuture<Boolean> runCamThread(CamDTO cam) {
+    public CompletableFuture<Boolean> runCamThread(CamDTO cam) throws InterruptedException {
+
         LOGGER.info("Running thread for " + cam.getUrl());
 
         VideoCapture capture = new VideoCapture(cam.getUrl());
@@ -75,9 +74,11 @@ public class ConsumeCamService {
         if (capture.read(mat)) {
             //send mat to ai backend and handle response
             LOGGER.info("Done " + this.i++ + " frame for : " + cam.getUrl());
-        }
-
-        return CompletableFuture.completedFuture(true);
+            Thread.sleep(1000);
+            LOGGER.info("Completing "+ " execution for : " + cam.getUrl());
+            return CompletableFuture.completedFuture(true);
+        } else
+            return CompletableFuture.completedFuture(false);
     }
 
     private Function<Throwable, Boolean> handleRunThreadFailure = throwable -> {
