@@ -76,8 +76,11 @@ public class ConsumeCamService {
             LOGGER.info("Done " + this.i++ + " frame for : " + cam.getUrl());
             Thread.sleep(1000);
             LOGGER.info("Completing " + " execution for : " + cam.getUrl());
+            return runCamThread(cam);
+        } else {
+            LOGGER.info("Cannot " + " get Mat for : " + cam.getUrl());
+            return CompletableFuture.completedFuture(false);
         }
-        return runCamThread(cam);
     }
 
     private Function<Throwable, Boolean> handleRunThreadFailure = throwable -> {
