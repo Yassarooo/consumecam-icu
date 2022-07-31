@@ -59,10 +59,8 @@ public class ConsumeCamService {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
             for (final CamDTO cam : camsList) {
-
                 LOGGER.info("sending cam to ai : " + cam.toString());
 
-                //send url and cam id to ai
                 RestTemplate restTemplate = new RestTemplate();
 
                 final String baseUrl = "http://localhost:" + "/api/ai";
