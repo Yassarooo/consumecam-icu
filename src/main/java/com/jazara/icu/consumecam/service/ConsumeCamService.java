@@ -1,7 +1,6 @@
 package com.jazara.icu.consumecam.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
 import com.jazara.icu.consumecam.domain.CamDTO;
@@ -10,12 +9,13 @@ import org.opencv.videoio.VideoCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,38 +54,30 @@ public class ConsumeCamService {
         }
     }
 
+    @Scheduled(fixedRate = 5000L)
     public void startScheduledTask() throws Exception {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
-            for (final CamDTO cam : camsList)
-                this.runCamThread(cam).exceptionally(handleRunThreadFailure);
+            for (final CamDTO cam : camsList) {
+
+                LOGGER.info("sending cam to ai : " + cam.toString());
+
+                //send url and cam id to ai
+                RestTemplate restTemplate = new RestTemplate();
+
+                final String baseUrl = "http://localhost:" + "/api/ai";
+                URI uri = new URI(baseUrl);
+
+                ResponseEntity<String> result = restTemplate.postForEntity(uri, cam, String.class);
+
+                if (result.getStatusCodeValue() != 200) {
+                    LOGGER.info("failed sending request to  : " + baseUrl);
+                }
+
+            }
         } else {
             LOGGER.info("camsList is Empty !! ");
         }
     }
-
-    @Async
-    public CompletableFuture<Boolean> runCamThread(CamDTO cam) throws InterruptedException {
-
-        LOGGER.info("Running thread for " + cam.getUrl());
-
-        VideoCapture capture = new VideoCapture(cam.getUrl());
-        Mat mat = new Mat();
-        if (capture.read(mat)) {
-            //send mat to ai backend and handle response
-            LOGGER.info("Done " + this.i++ + " frame for : " + cam.getUrl());
-            Thread.sleep(1000);
-            LOGGER.info("Completing " + " execution for : " + cam.getUrl());
-            return runCamThread(cam);
-        } else {
-            LOGGER.info("Cannot " + " get Mat for : " + cam.getUrl());
-            return CompletableFuture.completedFuture(false);
-        }
-    }
-
-    private Function<Throwable, Boolean> handleRunThreadFailure = throwable -> {
-        LOGGER.error("Failed to run thread: {}", throwable);
-        return false;
-    };
 
 }
