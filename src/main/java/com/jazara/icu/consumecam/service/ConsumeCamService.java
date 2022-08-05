@@ -49,7 +49,6 @@ public class ConsumeCamService {
             );
 
             LOGGER.info("MAPPER : " + camsList.size());
-            this.startScheduledTask();
         }
     }
 
