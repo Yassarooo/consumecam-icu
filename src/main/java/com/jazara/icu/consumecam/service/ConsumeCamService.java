@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
 import com.jazara.icu.consumecam.domain.Cam;
 import com.jazara.icu.consumecam.domain.CamDTO;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +66,12 @@ public class ConsumeCamService {
 
                 CamDTO camDTO = new CamDTO(cam.getId(), cam.getName(), cam.getUrl());
 
-                ResponseEntity<String> result = restTemplate.postForEntity(uri, camDTO, String.class);
+                ResponseEntity<String> result = restTemplate.postForEntity(uri, JSONValue.toJSONString(camDTO), String.class);
+
+                LOGGER.info(JSONValue.toJSONString(camDTO) + "       sent");
 
                 if (result.getStatusCodeValue() == 200) {
-                    LOGGER.info("sent success for  : " + camDTO.getId());
+                    LOGGER.info(JSONValue.toJSONString(camDTO) + "       sent success for  : " + camDTO.getId());
                 }
 
             }
