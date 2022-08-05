@@ -36,7 +36,7 @@ public class ConsumeCamService {
 
     public void consumeCam(String url) throws Exception {
         LOGGER.info("Running AI Instance for streaming : " + url);
-        //ResponseEntity<Map<String, Object>> m = authServiceClient.GetAllCams();
+        ResponseEntity<Map<String, Object>> m = authServiceClient.GetAllCams();
 
         //if (m.getBody().get("success").equals(false)) {
         //    throw new Exception("error sending request to auth-service");
