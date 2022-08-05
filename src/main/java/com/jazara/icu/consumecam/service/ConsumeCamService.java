@@ -36,20 +36,20 @@ public class ConsumeCamService {
 
     public void consumeCam(String url) throws Exception {
         LOGGER.info("Running AI Instance for streaming : " + url);
-        ResponseEntity<Map<String, Object>> m = authServiceClient.GetAllCams();
+        //ResponseEntity<Map<String, Object>> m = authServiceClient.GetAllCams();
 
-        if (m.getBody().get("success").equals(false)) {
-            throw new Exception("error sending request to auth-service");
-        } else {
-            ObjectMapper mapper = new ObjectMapper();
-            camsList = mapper.convertValue(
-                    m.getBody().get("result"),
-                    new TypeReference<List<CamDTO>>() {
-                    }
-            );
+        //if (m.getBody().get("success").equals(false)) {
+        //    throw new Exception("error sending request to auth-service");
+        //} else {
+        //    ObjectMapper mapper = new ObjectMapper();
+        //    camsList = mapper.convertValue(
+        //            m.getBody().get("result"),
+        //            new TypeReference<List<CamDTO>>() {
+        //            }
+        //    );
 
             LOGGER.info("MAPPER : " + camsList.size());
-        }
+        //}
     }
 
     @Scheduled(fixedRate = 5000L)
