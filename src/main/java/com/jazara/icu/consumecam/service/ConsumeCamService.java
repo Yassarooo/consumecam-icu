@@ -61,7 +61,7 @@ public class ConsumeCamService {
 
                 RestTemplate restTemplate = new RestTemplate();
 
-                final String baseUrl = "http://31.207.44.31:5000/api/Models/Predict";
+                final String baseUrl = "";
                 URI uri = new URI(baseUrl);
 
                 ResponseEntity<String> result = restTemplate.postForEntity(uri, cam, String.class);
