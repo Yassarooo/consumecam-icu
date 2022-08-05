@@ -60,7 +60,7 @@ public class ConsumeCamService {
 
                 RestTemplate restTemplate = new RestTemplate();
 
-                final String baseUrl = "";
+                final String baseUrl = "http://31.207.44.31:5000" + "/api/Models/Predict";
                 URI uri = new URI(baseUrl);
 
                 CamDTO camDTO = new CamDTO(cam.getId(), cam.getName(), cam.getUrl());
