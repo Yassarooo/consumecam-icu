@@ -3,14 +3,12 @@ package com.jazara.icu.consumecam.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
+import com.jazara.icu.consumecam.domain.Cam;
 import com.jazara.icu.consumecam.domain.CamDTO;
-import org.opencv.core.Mat;
-import org.opencv.videoio.VideoCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,17 +17,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 @Service
 public class ConsumeCamService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private Long i = 0L;
-
-    List<CamDTO> camsList = new ArrayList<CamDTO>();
+    List<Cam> camsList = new ArrayList<Cam>();
 
     @Autowired
     private AuthServiceClient authServiceClient;
@@ -46,7 +40,7 @@ public class ConsumeCamService {
                 ObjectMapper mapper = new ObjectMapper();
                 camsList = mapper.convertValue(
                         m.getBody().get("result"),
-                        new TypeReference<List<CamDTO>>() {
+                        new TypeReference<List<Cam>>() {
                         }
                 );
             } catch (Exception e) {
@@ -61,19 +55,21 @@ public class ConsumeCamService {
     public void startScheduledTask() throws Exception {
         LOGGER.info("started scheduledTask with list size : " + camsList.size());
         if (camsList.size() > 1) {
-            for (final CamDTO cam : camsList) {
+            for (final Cam cam : camsList) {
                 LOGGER.info("sending cam to ai : " + cam.toString());
 
-                //RestTemplate restTemplate = new RestTemplate();
+                RestTemplate restTemplate = new RestTemplate();
 
-                //final String baseUrl = "";
-                //URI uri = new URI(baseUrl);
+                final String baseUrl = "";
+                URI uri = new URI(baseUrl);
 
-                //ResponseEntity<String> result = restTemplate.postForEntity(uri, cam, String.class);
+                CamDTO camDTO = new CamDTO(cam.getId(), cam.getName(), cam.getUrl());
 
-                //if (result.getStatusCodeValue() != 200) {
-                //    LOGGER.info("failed sending request to  : " + baseUrl);
-                //}
+                ResponseEntity<String> result = restTemplate.postForEntity(uri, camDTO, String.class);
+
+                if (result.getStatusCodeValue() == 200) {
+                    LOGGER.info("sent success for  : " + camDTO.getId());
+                }
 
             }
         } else {
