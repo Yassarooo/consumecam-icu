@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -60,6 +61,7 @@ public class ConsumeCamService {
                 LOGGER.info("sending cam to ai : " + cam.toString());
 
                 RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
                 final String baseUrl = "http://31.207.44.31:5000" + "/api/Models/Predict";
                 URI uri = new URI(baseUrl);

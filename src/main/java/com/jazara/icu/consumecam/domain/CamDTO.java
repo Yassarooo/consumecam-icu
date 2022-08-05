@@ -5,8 +5,8 @@ import java.util.Objects;
 
 public class CamDTO {
     private Long id;
-    private String name;
     private String url;
+    private String name;
 
     public CamDTO(Long id, String name, String url) {
         this.id = id;
@@ -25,14 +25,6 @@ public class CamDTO {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -41,18 +33,26 @@ public class CamDTO {
         this.url = url;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CamDTO camDTO = (CamDTO) o;
         return Objects.equals(id, camDTO.id) &&
-                Objects.equals(name, camDTO.name) &&
-                Objects.equals(url, camDTO.url);
+                Objects.equals(url, camDTO.url) &&
+                Objects.equals(name, camDTO.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, url);
+        return Objects.hash(id, url, name);
     }
 }
