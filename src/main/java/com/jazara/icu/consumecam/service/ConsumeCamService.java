@@ -38,18 +38,18 @@ public class ConsumeCamService {
         LOGGER.info("Running AI Instance for streaming : " + url);
         ResponseEntity<Map<String, Object>> m = authServiceClient.GetAllCams();
 
-        //if (m.getBody().get("success").equals(false)) {
-        //    throw new Exception("error sending request to auth-service");
-        //} else {
-        //    ObjectMapper mapper = new ObjectMapper();
-        //    camsList = mapper.convertValue(
-        //            m.getBody().get("result"),
-        //            new TypeReference<List<CamDTO>>() {
-        //            }
-        //    );
+        if (m.getBody().get("success").equals(false)) {
+            throw new Exception("error sending request to auth-service");
+        } else {
+            ObjectMapper mapper = new ObjectMapper();
+            camsList = mapper.convertValue(
+                    m.getBody().get("result"),
+                    new TypeReference<List<CamDTO>>() {
+                    }
+            );
 
             LOGGER.info("MAPPER : " + camsList.size());
-        //}
+        }
     }
 
     @Scheduled(fixedRate = 5000L)
@@ -59,16 +59,16 @@ public class ConsumeCamService {
             for (final CamDTO cam : camsList) {
                 LOGGER.info("sending cam to ai : " + cam.toString());
 
-                RestTemplate restTemplate = new RestTemplate();
+                //RestTemplate restTemplate = new RestTemplate();
 
-                final String baseUrl = "";
-                URI uri = new URI(baseUrl);
+                //final String baseUrl = "";
+                //URI uri = new URI(baseUrl);
 
-                ResponseEntity<String> result = restTemplate.postForEntity(uri, cam, String.class);
+                //ResponseEntity<String> result = restTemplate.postForEntity(uri, cam, String.class);
 
-                if (result.getStatusCodeValue() != 200) {
-                    LOGGER.info("failed sending request to  : " + baseUrl);
-                }
+                //if (result.getStatusCodeValue() != 200) {
+                //    LOGGER.info("failed sending request to  : " + baseUrl);
+                //}
 
             }
         } else {
