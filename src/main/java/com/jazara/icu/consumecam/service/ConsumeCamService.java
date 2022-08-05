@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazara.icu.consumecam.config.AuthServiceClient;
 import com.jazara.icu.consumecam.domain.Cam;
 import com.jazara.icu.consumecam.domain.CamDTO;
+import org.codehaus.jettison.json.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -60,12 +64,26 @@ public class ConsumeCamService {
             for (final Cam cam : camsList) {
                 LOGGER.info("sending cam to ai : " + cam.toString());
 
-                RestTemplate restTemplate = new RestTemplate();
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
                 final String baseUrl = "http://31.207.44.31:5000" + "/api/Models/Predict";
                 URI uri = new URI(baseUrl);
 
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                JSONObject camJsonObject = new JSONObject();
+                camJsonObject.put("id", cam.getId());
+                camJsonObject.put("url", cam.getUrl());
+                camJsonObject.put("name", cam.getName());
+
+                HttpEntity<String> request =
+                        new HttpEntity<String>(camJsonObject.toString(), headers);
+
+                String personResultAsJsonStr =
+                        restTemplate.postForObject(uri, request, String.class);
+
+                LOGGER.info(personResultAsJsonStr);
+
+/*
                 CamDTO camDTO = new CamDTO(cam.getId(), cam.getName(), cam.getUrl());
 
                 ResponseEntity<String> result = restTemplate.postForEntity(uri, JSONValue.toJSONString(camDTO), String.class);
@@ -75,7 +93,7 @@ public class ConsumeCamService {
                 if (result.getStatusCodeValue() == 200) {
                     LOGGER.info(JSONValue.toJSONString(camDTO) + "       sent success for  : " + camDTO.getId());
                 }
-
+*/
             }
         } else {
             LOGGER.info("camsList is Empty !! ");
