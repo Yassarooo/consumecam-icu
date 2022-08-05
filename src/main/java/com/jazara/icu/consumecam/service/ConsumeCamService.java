@@ -41,12 +41,17 @@ public class ConsumeCamService {
         if (m.getBody().get("success").equals(false)) {
             throw new Exception("error sending request to auth-service");
         } else {
-            //ObjectMapper mapper = new ObjectMapper();
-            //camsList = mapper.convertValue(
-            //        m.getBody().get("result"),
-            //        new TypeReference<List<CamDTO>>() {
-            //        }
-            //);
+            try {
+
+                ObjectMapper mapper = new ObjectMapper();
+                camsList = mapper.convertValue(
+                        m.getBody().get("result"),
+                        new TypeReference<List<CamDTO>>() {
+                        }
+                );
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
 
             LOGGER.info("MAPPER : " + camsList.size());
         }
